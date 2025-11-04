@@ -11,7 +11,8 @@ df = snotel_point.get_daily_data(
 
 # convert SWE -> mm
 df["SWE"] = df["SWE"] * 25.4
-df["PRECIP"] = df["SWE"].diff().shift(-1)
+df["PRCP"] = df["SWE"].diff().shift(-1)
+df["PRCP"] = df["PRCP"].clip(lower=0.0)
 df["AIR TEMP"] = (5 / 9) * (df["AIR TEMP"] - 32)
 
 df = df.drop(columns=["geometry", "SWE_units", "AIR TEMP_units", "datasource"])
