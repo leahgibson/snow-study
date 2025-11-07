@@ -6,23 +6,35 @@ Here, I model the 2022 and 2023 water years in Crested Butte, using the Butte SN
 ## Model and Assumptions
 
 We begin with the snow water equivalent mass balance equation:
-$$
-    \frac{d\text{SWE}}{dt} = P_{\text{snow}} - M
-$$
+
+$$\frac{d\text{SWE}}{dt} = P_{\text{snow}} - M$$
+
 where $P_{snow}$ is the liquid water equivalent precipitation due to snowfall and $M$ is melt, both in mm. 
 
 The amount of snowfall is determined by partitioning measured SWE into snow and rain contribution using air temperature such that
-$$ P_{\text{snow}} = f(T) P_{\text{total}} $$
+
+$$P_{\text{snow}} = f(T) P_{\text{total}}$$
+
 where $f(T)$ is a linear function spanning the transitioin in temperature between rain and snow.
 
 Melt is separated into melt forced by temperature and melt forced by shortwave radiation. Melt forced by temperature, $M_{\text{temp}}$ uses a degree-day forcing (DDF) assumption of 2 degrees C, and thus is the mean air temperature, $T_{\text{mean}}$ is above 0 degrees C, then the melt forces by temperature, $M_{\text{temp}}$ is
+
 $$M_{\text{temp}} = DDF(T_{\text{mean}}).$$
 
 The melt forced by shortwave radiation is given by
+
 $$M_{\text{rad}} = \frac{(1-\alpha)_{in}t_{\text{day}}}{\rho_w L_f}$$
+
 where $\alpha$ is spectral albedo, $S_{in}$ is shortwave radiation, and $t_{\text{day}}$ is the amount of daylight. Albedo follows an exponential decay to account for snow aging.
 
 I used forward Euler with a daily timestep to model the evolution of SWE:
-$$SWE_{t+1} = SWT_t + P_{\text{snow}} - M.$$
+
+$$SWE_{t+1} = SWE_t + P_{\text{snow}} - M.$$
 
 
+## Data and Model Inputs
+
+This model used SWE and air temperature data from the Butte SNOTEL in Crested Butte, CO. Shortwave radiation and daylight time inputs came from DAYMET and were accessed usiing the command
+```bash
+curl -J 'https://daymet.ornl.gov/single-pixel/api/data?lat=38.8714&lon=-106.9784&vars=dayl,srad&start=2021-10-01&end=2023-09-30' -O
+```
